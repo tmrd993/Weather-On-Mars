@@ -13,3 +13,10 @@ public class ApiConstants {
 1. clone the repo and import it to your IDE as an existing Maven project
 2. run the app using the Application class
 3. navigate to ```localhost:8080/```
+
+# Screenshots
+## Title page
+![title page](screenshots/WeatherWebScreen01.png) 
+
+## Column plot
+![column plot](screenshots/WeatherWebScreen.png) 
