@@ -26,9 +26,9 @@ public class ApiConstants {
 ![line plot2](screenshots/MarsWeatherPlot2.png)
 
 ## Acknowledgements
-Huge thanks to the creators and contributors of the following third party libraries and frameworks which were used in this project
-[Vaadin Framework](https://vaadin.com/)  
-[Google gson](https://github.com/google/gson)  
-[Caffeine](https://github.com/ben-manes/caffeine)
+Huge thanks to the creators and contributors of the following third party libraries and frameworks which were used in this project  
++ [Vaadin Framework](https://vaadin.com/)  
++ [Google gson](https://github.com/google/gson)  
++ [Caffeine](https://github.com/ben-manes/caffeine)
 
 
