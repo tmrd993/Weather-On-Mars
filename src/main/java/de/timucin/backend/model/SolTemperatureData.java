@@ -13,8 +13,8 @@ import java.time.LocalDate;
 public class SolTemperatureData {
     // current NASA InSight solar day
     private final int sol;
-    // time of last datum (UTC) for any sensor at Elysium Planitia
-    private final LocalDate lastUTC;
+    // time of first datum (UTC) for any sensor at Elysium Planitia
+    private final LocalDate firstUTC;
     // max recorded temperature
     private final double maxTempF;
     // min recorded temperature
@@ -22,20 +22,31 @@ public class SolTemperatureData {
     // avg recorded temperature
     private final double avgTempF;
 
-    public SolTemperatureData(int sol, LocalDate lastUtc, double maxTemp, double minTemp, double avgTemp) {
+    private final double avgWindSpeedMS;
+    private final double maxWindSpeedMS;
+    private final double minWindSpeedMS;
+
+    private final String mostCommonWD;
+
+    public SolTemperatureData(int sol, LocalDate firstUtc, double maxTemp, double minTemp, double avgTemp,
+	    double avgWindSpeedMS, double maxWindSpeedMS, double minWindSpeedMS, String mostCommonWD) {
 	this.sol = sol;
-	this.lastUTC = lastUtc;
+	this.firstUTC = firstUtc;
 	this.maxTempF = maxTemp;
 	this.minTempF = minTemp;
 	this.avgTempF = avgTemp;
+	this.avgWindSpeedMS = avgWindSpeedMS;
+	this.maxWindSpeedMS = maxWindSpeedMS;
+	this.minWindSpeedMS = minWindSpeedMS;
+	this.mostCommonWD = mostCommonWD;
     }
 
     public int getSol() {
 	return sol;
     }
 
-    public LocalDate getLastUTC() {
-	return lastUTC;
+    public LocalDate getFirstUTC() {
+	return firstUTC;
     }
 
     public double getMaxTempF() {
@@ -49,10 +60,26 @@ public class SolTemperatureData {
     public double getAvgTempF() {
 	return avgTempF;
     }
+    
+    public double getAvgWindSpeedMS() {
+	return avgWindSpeedMS;
+    }
+    
+    public double getMaxWindSpeedMS() {
+	return maxWindSpeedMS;
+    }
+    
+    public double getMinWindSpeedMS() {
+	return minWindSpeedMS;
+    }
+    
+    public String getMostCommonWD() {
+	return mostCommonWD;
+    }
 
     @Override
     public String toString() {
-	return "Sol: " + sol + "\n" + "Datum of last sensor: " + lastUTC.toString() + "\n" + "Temperature:" + "\n\t"
+	return "Sol: " + sol + "\n" + "Datum of last sensor: " + firstUTC.toString() + "\n" + "Temperature:" + "\n\t"
 		+ "Average: " + avgTempF + "° F\n\t" + "Max: " + maxTempF + "° F\n\t" + "Min: " + minTempF + "° F\n";
     }
 

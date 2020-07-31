@@ -23,28 +23,48 @@ public class WeatherDataRetriever {
 
 	try {
 	    URL requestURL = new URL(ApiConstants.REQUEST_URL_STR);
-	    HttpURLConnection httpconnection= (HttpURLConnection) requestURL.openConnection();
+	    HttpURLConnection httpconnection = (HttpURLConnection) requestURL.openConnection();
 	    httpconnection.connect();
-	    
+
 	    InputStreamReader isr = new InputStreamReader((InputStream) httpconnection.getContent());
 	    JsonElement rootElement = JsonParser.parseReader(isr);
 	    JsonObject rootObject = rootElement.getAsJsonObject();
-	    
-	   
+
 	    List<String> solKeys = new ArrayList<>();
-	    for(JsonElement el : rootObject.get("sol_keys").getAsJsonArray()) {
+	    for (JsonElement el : rootObject.get("sol_keys").getAsJsonArray()) {
 		solKeys.add(el.getAsString());
 	    }
-	    
-	    for(String sol : solKeys) {
+
+	    for (String sol : solKeys) {
 		JsonElement atmosphericTempElement = rootObject.get(sol).getAsJsonObject().get("AT");
-		double avg = atmosphericTempElement.getAsJsonObject().get("av").getAsDouble();
-		double max = atmosphericTempElement.getAsJsonObject().get("mx").getAsDouble();
-		double min = atmosphericTempElement.getAsJsonObject().get("mn").getAsDouble();
-		String lastUTCStr = rootObject.get(sol).getAsJsonObject().get("Last_UTC").getAsString();
-		LocalDate date = LocalDate.parse(lastUTCStr.substring(0, lastUTCStr.indexOf("T")));
-		
-		weatherData.add(new SolTemperatureData(Integer.parseInt(sol), date, max, min, avg));
+		double avgT = atmosphericTempElement.getAsJsonObject().get("av").getAsDouble();
+		double maxT = atmosphericTempElement.getAsJsonObject().get("mx").getAsDouble();
+		double minT = atmosphericTempElement.getAsJsonObject().get("mn").getAsDouble();
+		String firstUTCStr = rootObject.get(sol).getAsJsonObject().get("First_UTC").getAsString();
+		LocalDate date = LocalDate.parse(firstUTCStr.substring(0, firstUTCStr.indexOf("T")));
+
+		JsonElement horizontalWindSpeedElement = rootObject.get(sol).getAsJsonObject().get("HWS");
+		double avgWs = horizontalWindSpeedElement.getAsJsonObject().get("av").getAsDouble();
+		double maxWs = horizontalWindSpeedElement.getAsJsonObject().get("mx").getAsDouble();
+		double minWs = horizontalWindSpeedElement.getAsJsonObject().get("mn").getAsDouble();
+
+		JsonElement directionElement = rootObject.get(sol).getAsJsonObject().get("WD");
+		String mostCommonWD = directionElement.getAsJsonObject().get("most_common").getAsJsonObject()
+			.get("compass_point").getAsString();
+
+		boolean temperatureDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
+			.getAsJsonObject().get("AT").getAsJsonObject().get("valid").getAsBoolean();
+		boolean windSpeedDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
+			.getAsJsonObject().get("HWS").getAsJsonObject().get("valid").getAsBoolean();
+		boolean directionPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
+			.getAsJsonObject().get("WD").getAsJsonObject().get("valid").getAsBoolean();
+
+		// create new temperature data object if validity checks are true
+		if (temperatureDataPresent && windSpeedDataPresent && directionPresent) {
+		    weatherData.add(new SolTemperatureData(Integer.parseInt(sol), date, maxT, minT, avgT, avgWs, maxWs,
+			    minWs, mostCommonWD));
+		}
+
 	    }
 
 	} catch (IOException e) {
