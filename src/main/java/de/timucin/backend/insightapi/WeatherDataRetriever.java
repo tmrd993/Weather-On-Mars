@@ -8,18 +8,35 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import de.timucin.backend.constants.ApiConstants;
 import de.timucin.backend.model.SolTemperatureData;
 
 public class WeatherDataRetriever {
 
+    private static final Cache<String, List<SolTemperatureData>> cache;
+    private static final String solDataList = "SOL_DATA_LIST";
+
+    static {
+	cache = Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).maximumSize(50).build();
+    }
+
     public List<SolTemperatureData> fetchWeatherData() {
-	List<SolTemperatureData> weatherData = new ArrayList<>();
+	
+	List<SolTemperatureData> weatherData = cache.getIfPresent(solDataList);
+	if(weatherData != null) {
+	    return weatherData;
+	}
+	
+	weatherData = new ArrayList<>();
 
 	try {
 	    URL requestURL = new URL(ApiConstants.REQUEST_URL_STR);
@@ -70,7 +87,7 @@ public class WeatherDataRetriever {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-
+	cache.put(solDataList, weatherData);
 	return weatherData;
     }
 }
