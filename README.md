@@ -9,6 +9,9 @@ public class ApiConstants {
     ......
 ```
 
+Live demo: https://weather-on-mars.herokuapp.com/  
+Deployed using heroku (https://heroku.com/)
+
 # How to
 1. clone the repo and import it to your IDE as an existing Maven project
 2. run the app using the Application class
