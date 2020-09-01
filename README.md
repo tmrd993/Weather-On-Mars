@@ -9,7 +9,7 @@ public class ApiConstants {
     ......
 ```
 
-Live demo: https://weather-on-mars.herokuapp.com/  
+Live demo: No new data for now so I took the link down
 Deployed using heroku (https://heroku.com/)
 
 27.08.2020 - No new data available since Aug. 16, 2020 due to an electronic issue with the mars lander, More info: https://mars.nasa.gov/news/8744/nasa-engineers-checking-insights-weather-sensors/?site=insight
