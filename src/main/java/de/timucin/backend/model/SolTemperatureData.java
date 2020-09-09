@@ -32,12 +32,12 @@ public class SolTemperatureData {
 	    double avgWindSpeedMS, double maxWindSpeedMS, double minWindSpeedMS, String mostCommonWD) {
 	this.sol = sol;
 	this.firstUTC = firstUtc;
-	this.maxTempF = maxTemp;
-	this.minTempF = minTemp;
-	this.avgTempF = avgTemp;
-	this.avgWindSpeedMS = avgWindSpeedMS;
-	this.maxWindSpeedMS = maxWindSpeedMS;
-	this.minWindSpeedMS = minWindSpeedMS;
+	this.maxTempF = Math.floor(maxTemp * 100) / 100;
+	this.minTempF = Math.floor(minTemp * 100) / 100;
+	this.avgTempF = Math.floor(avgTemp * 100) / 100;
+	this.avgWindSpeedMS = Math.floor(avgWindSpeedMS * 100) / 100;
+	this.maxWindSpeedMS = Math.floor(maxWindSpeedMS * 100) / 100;
+	this.minWindSpeedMS = Math.floor(minWindSpeedMS * 100) / 100;
 	this.mostCommonWD = mostCommonWD;
     }
 
