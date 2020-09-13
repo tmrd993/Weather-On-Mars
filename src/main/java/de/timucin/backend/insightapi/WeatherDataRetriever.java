@@ -30,12 +30,12 @@ public class WeatherDataRetriever {
     }
 
     public List<SolTemperatureData> fetchWeatherData() {
-	
+
 	List<SolTemperatureData> weatherData = cache.getIfPresent(solDataList);
-	if(weatherData != null) {
+	if (weatherData != null) {
 	    return weatherData;
 	}
-	
+
 	weatherData = new ArrayList<>();
 
 	try {
@@ -53,22 +53,6 @@ public class WeatherDataRetriever {
 	    }
 
 	    for (String sol : solKeys) {
-		JsonElement atmosphericTempElement = rootObject.get(sol).getAsJsonObject().get("AT");
-		double avgT = atmosphericTempElement.getAsJsonObject().get("av").getAsDouble();
-		double maxT = atmosphericTempElement.getAsJsonObject().get("mx").getAsDouble();
-		double minT = atmosphericTempElement.getAsJsonObject().get("mn").getAsDouble();
-		String firstUTCStr = rootObject.get(sol).getAsJsonObject().get("First_UTC").getAsString();
-		LocalDate date = LocalDate.parse(firstUTCStr.substring(0, firstUTCStr.indexOf("T")));
-
-		JsonElement horizontalWindSpeedElement = rootObject.get(sol).getAsJsonObject().get("HWS");
-		double avgWs = horizontalWindSpeedElement.getAsJsonObject().get("av").getAsDouble();
-		double maxWs = horizontalWindSpeedElement.getAsJsonObject().get("mx").getAsDouble();
-		double minWs = horizontalWindSpeedElement.getAsJsonObject().get("mn").getAsDouble();
-
-		JsonElement directionElement = rootObject.get(sol).getAsJsonObject().get("WD");
-		String mostCommonWD = directionElement.getAsJsonObject().get("most_common").getAsJsonObject()
-			.get("compass_point").getAsString();
-
 		boolean temperatureDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
 			.getAsJsonObject().get("AT").getAsJsonObject().get("valid").getAsBoolean();
 		boolean windSpeedDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
@@ -76,12 +60,26 @@ public class WeatherDataRetriever {
 		boolean directionPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
 			.getAsJsonObject().get("WD").getAsJsonObject().get("valid").getAsBoolean();
 
-		// create new temperature data object if validity checks are true
 		if (temperatureDataPresent && windSpeedDataPresent && directionPresent) {
+		    JsonElement atmosphericTempElement = rootObject.get(sol).getAsJsonObject().get("AT");
+		    double avgT = atmosphericTempElement.getAsJsonObject().get("av").getAsDouble();
+		    double maxT = atmosphericTempElement.getAsJsonObject().get("mx").getAsDouble();
+		    double minT = atmosphericTempElement.getAsJsonObject().get("mn").getAsDouble();
+		    String firstUTCStr = rootObject.get(sol).getAsJsonObject().get("First_UTC").getAsString();
+		    LocalDate date = LocalDate.parse(firstUTCStr.substring(0, firstUTCStr.indexOf("T")));
+
+		    JsonElement horizontalWindSpeedElement = rootObject.get(sol).getAsJsonObject().get("HWS");
+		    double avgWs = horizontalWindSpeedElement.getAsJsonObject().get("av").getAsDouble();
+		    double maxWs = horizontalWindSpeedElement.getAsJsonObject().get("mx").getAsDouble();
+		    double minWs = horizontalWindSpeedElement.getAsJsonObject().get("mn").getAsDouble();
+
+		    JsonElement directionElement = rootObject.get(sol).getAsJsonObject().get("WD");
+		    String mostCommonWD = directionElement.getAsJsonObject().get("most_common").getAsJsonObject()
+			    .get("compass_point").getAsString();
+
 		    weatherData.add(new SolTemperatureData(Integer.parseInt(sol), date, maxT, minT, avgT, avgWs, maxWs,
 			    minWs, mostCommonWD));
 		}
-
 	    }
 
 	} catch (IOException e) {
