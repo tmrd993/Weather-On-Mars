@@ -76,8 +76,6 @@ public class WeatherDataRetriever {
 
 		    weatherData.add(new SolTemperatureData(Integer.parseInt(sol), date, maxT, minT, avgT, avgWs, maxWs,
 			    minWs, mostCommonWD));
-		    
-		    System.out.println("sol: " + sol + " " + avgT + "   " + maxT + "   " + minT + "   " + avgWs + "   " + maxWs + "    " + minWs + "    " + mostCommonWD);
 		}
 	    }
 
