@@ -30,94 +30,92 @@ public class MainView extends VerticalLayout {
      */
     public MainView() {
 	H1 title = new H1("Weather on Mars");
-
 	WeatherDataRetriever retriever = new WeatherDataRetriever();
-
 	List<SolTemperatureData> temperatureData = retriever.fetchWeatherData();
-	
 
-	// create the grid
-	Grid<SolTemperatureData> gridT = new Grid<>(SolTemperatureData.class);
-	gridT.setItems(temperatureData);
-	gridT.setColumns("sol", "firstUTC", "avgTempF", "maxTempF", "minTempF");
-	gridT.getColumnByKey("firstUTC").setHeader("Date (UTC)");
-	gridT.getColumnByKey("avgTempF").setHeader("Average Temperature (° F)");
-	gridT.getColumnByKey("maxTempF").setHeader("Maximum Temperature (° F)");
-	gridT.getColumnByKey("minTempF").setHeader("Minimum Temperature (° F)");
-	
-	Grid<SolTemperatureData> gridWS = new Grid<>(SolTemperatureData.class);
-	gridWS.setItems(temperatureData);
-	gridWS.setColumns("sol", "firstUTC", "avgWindSpeedMS", "maxWindSpeedMS", "minWindSpeedMS", "mostCommonWD");
-	gridWS.getColumnByKey("firstUTC").setHeader("Date (UTC)");
-	gridWS.getColumnByKey("avgWindSpeedMS").setHeader("Average Wind Speed (m/s)");
-	gridWS.getColumnByKey("maxWindSpeedMS").setHeader("Maximum Wind Speed (m/s)");
-	gridWS.getColumnByKey("minWindSpeedMS").setHeader("Minimum Wind Speed (m/s)");
-	gridWS.getColumnByKey("mostCommonWD").setHeader("Wind Direction (most common)");
-	
+	if (temperatureData.isEmpty()) {
+	    H1 noDataMessage = new H1("No new data available");
+	    add(title, noDataMessage);
+	}
 
-	// create the column plot for the temperature plots
-	Chart chartTemp = new Chart();
-	Configuration configTemp = chartTemp.getConfiguration();
-	configTemp.setTitle("Weather data for the last " + temperatureData.size() + " Sol");
-	configTemp.setSubTitle("Source: NASA InSight");
-	chartTemp.getConfiguration().getChart().setType(ChartType.LINE);
+	else {
+	    // create the grid
+	    Grid<SolTemperatureData> gridT = new Grid<>(SolTemperatureData.class);
+	    gridT.setItems(temperatureData);
+	    gridT.setColumns("sol", "firstUTC", "avgTempF", "maxTempF", "minTempF");
+	    gridT.getColumnByKey("firstUTC").setHeader("Date (UTC)");
+	    gridT.getColumnByKey("avgTempF").setHeader("Average Temperature (° F)");
+	    gridT.getColumnByKey("maxTempF").setHeader("Maximum Temperature (° F)");
+	    gridT.getColumnByKey("minTempF").setHeader("Minimum Temperature (° F)");
 
-	configTemp.addSeries(new ListSeries("Average Temp. (° F)",
-		temperatureData.stream().map(s -> s.getAvgTempF()).collect(Collectors.toList())));
-	configTemp.addSeries(new ListSeries("Max Temp. (° F)",
-		temperatureData.stream().map(s -> s.getMaxTempF()).collect(Collectors.toList())));
-	configTemp.addSeries(new ListSeries("Min Temp. (° F)",
-		temperatureData.stream().map(s -> s.getMinTempF()).collect(Collectors.toList())));
+	    Grid<SolTemperatureData> gridWS = new Grid<>(SolTemperatureData.class);
+	    gridWS.setItems(temperatureData);
+	    gridWS.setColumns("sol", "firstUTC", "avgWindSpeedMS", "maxWindSpeedMS", "minWindSpeedMS", "mostCommonWD");
+	    gridWS.getColumnByKey("firstUTC").setHeader("Date (UTC)");
+	    gridWS.getColumnByKey("avgWindSpeedMS").setHeader("Average Wind Speed (m/s)");
+	    gridWS.getColumnByKey("maxWindSpeedMS").setHeader("Maximum Wind Speed (m/s)");
+	    gridWS.getColumnByKey("minWindSpeedMS").setHeader("Minimum Wind Speed (m/s)");
+	    gridWS.getColumnByKey("mostCommonWD").setHeader("Wind Direction (most common)");
 
-	XAxis x = new XAxis();
-	x.setCrosshair(new Crosshair());
-	x.setCategories(temperatureData.stream().map(s -> new String(s.getSol() + "")).toArray(String[]::new));
-	x.setTitle("Sol");
-	configTemp.addxAxis(x);
+	    // create the column plot for the temperature plots
+	    Chart chartTemp = new Chart();
+	    Configuration configTemp = chartTemp.getConfiguration();
+	    configTemp.setTitle("Weather data for the last " + temperatureData.size() + " Sol");
+	    configTemp.setSubTitle("Source: NASA InSight");
+	    chartTemp.getConfiguration().getChart().setType(ChartType.LINE);
 
-	Stream<Double> avgStream = temperatureData.stream().mapToDouble(s -> s.getAvgTempF()).boxed();
-	Stream<Double> maxStream = temperatureData.stream().mapToDouble(s -> s.getMaxTempF()).boxed();
-	Stream<Double> minStream = temperatureData.stream().mapToDouble(s -> s.getMinTempF()).boxed();
+	    configTemp.addSeries(new ListSeries("Average Temp. (° F)",
+		    temperatureData.stream().map(s -> s.getAvgTempF()).collect(Collectors.toList())));
+	    configTemp.addSeries(new ListSeries("Max Temp. (° F)",
+		    temperatureData.stream().map(s -> s.getMaxTempF()).collect(Collectors.toList())));
+	    configTemp.addSeries(new ListSeries("Min Temp. (° F)",
+		    temperatureData.stream().map(s -> s.getMinTempF()).collect(Collectors.toList())));
 
-	double minTemp = Stream.concat(Stream.concat(avgStream, maxStream), minStream).mapToDouble(s -> s).min()
-		.getAsDouble();
+	    XAxis x = new XAxis();
+	    x.setCrosshair(new Crosshair());
+	    x.setCategories(temperatureData.stream().map(s -> new String(s.getSol() + "")).toArray(String[]::new));
+	    x.setTitle("Sol");
+	    configTemp.addxAxis(x);
 
-	YAxis y = new YAxis();
-	y.setMin((int) (minTemp - 20));
-	y.setTitle("Temperature (° F)");
-	configTemp.addyAxis(y);
+	    Stream<Double> avgStream = temperatureData.stream().mapToDouble(s -> s.getAvgTempF()).boxed();
+	    Stream<Double> maxStream = temperatureData.stream().mapToDouble(s -> s.getMaxTempF()).boxed();
+	    Stream<Double> minStream = temperatureData.stream().mapToDouble(s -> s.getMinTempF()).boxed();
 
-	Tooltip tooltip = new Tooltip();
-	tooltip.setShared(true);
-	configTemp.setTooltip(tooltip);
-	
-	// create the colum  plot for the wind speed plot
-	Chart chartWS = new Chart();
-	Configuration configWS = chartWS.getConfiguration();
-	configWS.setTitle("Wind speeds for the last " + temperatureData.size() + " Sol");
-	configWS.setSubTitle("Source: NASA InSight");
-	chartWS.getConfiguration().getChart().setType(ChartType.LINE);
-	
-	configWS.addSeries(new ListSeries("Average Wind Speed (m/s)",
-		temperatureData.stream().map(s -> s.getAvgWindSpeedMS()).collect(Collectors.toList())));
-	configWS.addSeries(new ListSeries("Maximum Wind Speed (m/s)",
-		temperatureData.stream().map(s -> s.getMaxWindSpeedMS()).collect(Collectors.toList())));
-	configWS.addSeries(new ListSeries("Minimum Wind Speed (m/s)",
-		temperatureData.stream().map(s -> s.getMinWindSpeedMS()).collect(Collectors.toList())));
-	// we can reuse the same x-axis as above
-	configWS.addxAxis(x);
-	
-	YAxis yWS = new YAxis();
-	yWS.setMin(0);
-	yWS.setTitle("Wind Speed (m/s)");
-	configWS.addyAxis(yWS);
-	configWS.setTooltip(tooltip);
-	
-	
-	
-	
+	    double minTemp = Stream.concat(Stream.concat(avgStream, maxStream), minStream).mapToDouble(s -> s).min()
+		    .getAsDouble();
 
-	add(title, gridT, gridWS, chartTemp, chartWS);
+	    YAxis y = new YAxis();
+	    y.setMin((int) (minTemp - 20));
+	    y.setTitle("Temperature (° F)");
+	    configTemp.addyAxis(y);
+
+	    Tooltip tooltip = new Tooltip();
+	    tooltip.setShared(true);
+	    configTemp.setTooltip(tooltip);
+
+	    // create the colum plot for the wind speed plot
+	    Chart chartWS = new Chart();
+	    Configuration configWS = chartWS.getConfiguration();
+	    configWS.setTitle("Wind speeds for the last " + temperatureData.size() + " Sol");
+	    configWS.setSubTitle("Source: NASA InSight");
+	    chartWS.getConfiguration().getChart().setType(ChartType.LINE);
+
+	    configWS.addSeries(new ListSeries("Average Wind Speed (m/s)",
+		    temperatureData.stream().map(s -> s.getAvgWindSpeedMS()).collect(Collectors.toList())));
+	    configWS.addSeries(new ListSeries("Maximum Wind Speed (m/s)",
+		    temperatureData.stream().map(s -> s.getMaxWindSpeedMS()).collect(Collectors.toList())));
+	    configWS.addSeries(new ListSeries("Minimum Wind Speed (m/s)",
+		    temperatureData.stream().map(s -> s.getMinWindSpeedMS()).collect(Collectors.toList())));
+	    // we can reuse the same x-axis as above
+	    configWS.addxAxis(x);
+
+	    YAxis yWS = new YAxis();
+	    yWS.setMin(0);
+	    yWS.setTitle("Wind Speed (m/s)");
+	    configWS.addyAxis(yWS);
+	    configWS.setTooltip(tooltip);
+
+	    add(title, gridT, gridWS, chartTemp, chartWS);
+	}
     }
-
 }
