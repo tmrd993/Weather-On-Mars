@@ -53,12 +53,9 @@ public class WeatherDataRetriever {
 	    }
 
 	    for (String sol : solKeys) {
-		boolean temperatureDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
-			.getAsJsonObject().get("AT").getAsJsonObject().get("valid").getAsBoolean();
-		boolean windSpeedDataPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
-			.getAsJsonObject().get("HWS").getAsJsonObject().get("valid").getAsBoolean();
-		boolean directionPresent = rootObject.get("validity_checks").getAsJsonObject().get(sol)
-			.getAsJsonObject().get("WD").getAsJsonObject().get("valid").getAsBoolean();
+		boolean temperatureDataPresent = rootObject.get(sol).getAsJsonObject().has("AT");
+		boolean windSpeedDataPresent = rootObject.get(sol).getAsJsonObject().has("HWS");
+		boolean directionPresent = rootObject.get(sol).getAsJsonObject().get("WD").getAsJsonObject().has("most_common");
 
 		if (temperatureDataPresent && windSpeedDataPresent && directionPresent) {
 		    JsonElement atmosphericTempElement = rootObject.get(sol).getAsJsonObject().get("AT");
@@ -79,6 +76,8 @@ public class WeatherDataRetriever {
 
 		    weatherData.add(new SolTemperatureData(Integer.parseInt(sol), date, maxT, minT, avgT, avgWs, maxWs,
 			    minWs, mostCommonWD));
+		    
+		    System.out.println("sol: " + sol + " " + avgT + "   " + maxT + "   " + minT + "   " + avgWs + "   " + maxWs + "    " + minWs + "    " + mostCommonWD);
 		}
 	    }
 
