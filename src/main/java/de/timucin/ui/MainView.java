@@ -37,7 +37,7 @@ public class MainView extends VerticalLayout {
 
 	if (temperatureData.size() < 3) {
 	    H2 noDataMessage = new H2(
-		    "No new data available.\nData below is made up was created to show the functionality of the application. It is not lifted from official NASA sources. For official data, see https://mars.nasa.gov/insight/weather/");
+		    "No new data available.\nData below is made up and was created to show the functionality of the application. It is not lifted from official NASA sources. For official data, see https://mars.nasa.gov/insight/weather/");
 	    add(title, noDataMessage);
 	    temperatureData = SolTemperatureData.fakeData();
 	}
