@@ -1,6 +1,7 @@
 package de.timucin.backend.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Model representing weather data for a single sol (solar day) at Elysium
@@ -81,6 +82,19 @@ public class SolTemperatureData {
     public String toString() {
 	return "Sol: " + sol + "\n" + "Datum of last sensor: " + firstUTC.toString() + "\n" + "Temperature:" + "\n\t"
 		+ "Average: " + avgTempF + "° F\n\t" + "Max: " + maxTempF + "° F\n\t" + "Min: " + minTempF + "° F\n";
+    }
+    
+    // static factory method for testing purposes
+    public static List<SolTemperatureData> fakeData() {
+	List<SolTemperatureData> fakeData = List.of(new SolTemperatureData(589, LocalDate.of(2020, 7, 23), -13.111, -90.183, -57.947, 16.061, 0.2, 5.621, "WNW"),
+		new SolTemperatureData(590, LocalDate.of(2020, 7, 23), -11.875, -90.12, -60.247,31.061, 9.5, 0.621, "SW"),
+		new SolTemperatureData(591, LocalDate.of(2020, 7, 24), -12.71, -89.83, -59.547, 13.061, 0.1, 4.521, "WNW"),
+		new SolTemperatureData(592, LocalDate.of(2020, 7, 25), -11.151, -91.163, -57.947, 33.61, 9.4, 0.61, "SW"),
+		new SolTemperatureData(593, LocalDate.of(2020, 7, 26), -10.871, -92.183, -57.947, 19.061, 0.2, 5.721, "WNW"),
+		new SolTemperatureData(594, LocalDate.of(2020, 7, 27), -9.11, -88.183, -57.947, 14.061, 0.2, 5.221, "WNW"),
+		new SolTemperatureData(595, LocalDate.of(2020, 7, 28), -12.111, -87.23, -57.947, 11.061, 0.1, 4.921, "WNW"));
+	
+	return fakeData;
     }
 
 }
