@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -31,10 +32,13 @@ public class InsightDataRetrieverService implements DataRetrieverService {
 		cache = Caffeine.newBuilder().expireAfterWrite(24, TimeUnit.HOURS).maximumSize(50).build();
 	}
 
-	private String requestUrlString = "https://api.nasa.gov/insight_weather/?api_key=LgheLChEmfp9cI8pUdiKjotfw8IHqgSSQvPStIR9&feedtype=json&ver=1.0";
+	@Value("${insighturl}")
+	private String requestUrlString;
 
 	@Override
 	public List<SolTemperatureData> fetchCurrentWeatherData() {
+		
+		System.out.println(requestUrlString);
 
 		List<SolTemperatureData> weatherData = cache.getIfPresent(solDataList);
 		if (weatherData != null) {
