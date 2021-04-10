@@ -1,12 +1,10 @@
 # Summary
 This is a simple web application that displays the weather at Elysium Planitia on Mars.  
 The Data is obtained through the NASA InSight Weather API. You can get a free API-Key at https://api.nasa.gov/  
-Once you have your key, replace the placeholder in the ApiConstants class with it  
+Once you have your key, add it to the URL defined in the properties file
 
-```java
-public class ApiConstants {
-    private static final String API_KEY = "<YOUR API KEY HERE>";
-    ......
+```
+insighturl = https://api.nasa.gov/insight_weather/?api_key=<YOUR_API_KEY_HERE>&feedtype=json&ver=1.0
 ```
 
 Live demo: https://weather-on-mars.herokuapp.com/   
