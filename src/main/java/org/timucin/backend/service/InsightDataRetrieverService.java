@@ -37,8 +37,6 @@ public class InsightDataRetrieverService implements DataRetrieverService {
 
 	@Override
 	public List<SolTemperatureData> fetchCurrentWeatherData() {
-		
-		System.out.println(requestUrlString);
 
 		List<SolTemperatureData> weatherData = cache.getIfPresent(solDataList);
 		if (weatherData != null) {
